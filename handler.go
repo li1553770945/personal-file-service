@@ -16,21 +16,16 @@ func (s *FileServiceImpl) UploadFile(ctx context.Context, req *file.UploadFileRe
 	return
 }
 
-// DownFileReq implements the FileServiceImpl interface.
-func (s *FileServiceImpl) DownFileReq(ctx context.Context, req *file.DownloadFileReq) (resp *file.DownloadFileResp, err error) {
+// DownloadFileReq implements the FileServiceImpl interface.
+func (s *FileServiceImpl) DownloadFileReq(ctx context.Context, req *file.DownloadFileReq) (resp *file.DownloadFileResp, err error) {
 	APP := container.GetGlobalContainer()
 	resp, err = APP.FileService.DownloadFile(ctx, req)
 	return
 }
 
-// DownloadFileReq implements the FileServiceImpl interface.
-func (s *FileServiceImpl) DownloadFileReq(ctx context.Context, req *file.DownloadFileReq) (resp *file.DownloadFileResp, err error) {
-	// TODO: Your code here...
-	return
-}
-
 // DeleteFile implements the FileServiceImpl interface.
 func (s *FileServiceImpl) DeleteFile(ctx context.Context, req *file.DeleteFileReq) (resp *file.DeleteFileResp, err error) {
-	// TODO: Your code here...
+	APP := container.GetGlobalContainer()
+	resp, err = APP.FileService.DeleteFile(ctx, req)
 	return
 }

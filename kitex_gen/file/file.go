@@ -328,6 +328,7 @@ type UploadFileResp struct {
 	Ak       string         `thrift:"ak,2,required" frugal:"2,required,string" json:"ak"`
 	Sk       string         `thrift:"sk,3,required" frugal:"3,required,string" json:"sk"`
 	Key      string         `thrift:"key,4,required" frugal:"4,required,string" json:"key"`
+	OssPath  string         `thrift:"ossPath,5,required" frugal:"5,required,string" json:"ossPath"`
 }
 
 func NewUploadFileResp() *UploadFileResp {
@@ -358,6 +359,10 @@ func (p *UploadFileResp) GetSk() (v string) {
 func (p *UploadFileResp) GetKey() (v string) {
 	return p.Key
 }
+
+func (p *UploadFileResp) GetOssPath() (v string) {
+	return p.OssPath
+}
 func (p *UploadFileResp) SetBaseResp(val *base.BaseResp) {
 	p.BaseResp = val
 }
@@ -370,12 +375,16 @@ func (p *UploadFileResp) SetSk(val string) {
 func (p *UploadFileResp) SetKey(val string) {
 	p.Key = val
 }
+func (p *UploadFileResp) SetOssPath(val string) {
+	p.OssPath = val
+}
 
 var fieldIDToName_UploadFileResp = map[int16]string{
 	1: "baseResp",
 	2: "ak",
 	3: "sk",
 	4: "key",
+	5: "ossPath",
 }
 
 func (p *UploadFileResp) IsSetBaseResp() bool {
@@ -390,6 +399,7 @@ func (p *UploadFileResp) Read(iprot thrift.TProtocol) (err error) {
 	var issetAk bool = false
 	var issetSk bool = false
 	var issetKey bool = false
+	var issetOssPath bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -449,6 +459,17 @@ func (p *UploadFileResp) Read(iprot thrift.TProtocol) (err error) {
 					goto SkipFieldError
 				}
 			}
+		case 5:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetOssPath = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
@@ -480,6 +501,11 @@ func (p *UploadFileResp) Read(iprot thrift.TProtocol) (err error) {
 
 	if !issetKey {
 		fieldId = 4
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetOssPath {
+		fieldId = 5
 		goto RequiredFieldNotSetError
 	}
 	return nil
@@ -535,6 +561,15 @@ func (p *UploadFileResp) ReadField4(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *UploadFileResp) ReadField5(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.OssPath = v
+	}
+	return nil
+}
+
 func (p *UploadFileResp) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("UploadFileResp"); err != nil {
@@ -555,6 +590,10 @@ func (p *UploadFileResp) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField4(oprot); err != nil {
 			fieldId = 4
+			goto WriteFieldError
+		}
+		if err = p.writeField5(oprot); err != nil {
+			fieldId = 5
 			goto WriteFieldError
 		}
 
@@ -644,6 +683,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
+func (p *UploadFileResp) writeField5(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("ossPath", thrift.STRING, 5); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.OssPath); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+}
+
 func (p *UploadFileResp) String() string {
 	if p == nil {
 		return "<nil>"
@@ -667,6 +723,9 @@ func (p *UploadFileResp) DeepEqual(ano *UploadFileResp) bool {
 		return false
 	}
 	if !p.Field4DeepEqual(ano.Key) {
+		return false
+	}
+	if !p.Field5DeepEqual(ano.OssPath) {
 		return false
 	}
 	return true
@@ -696,6 +755,13 @@ func (p *UploadFileResp) Field3DeepEqual(src string) bool {
 func (p *UploadFileResp) Field4DeepEqual(src string) bool {
 
 	if strings.Compare(p.Key, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *UploadFileResp) Field5DeepEqual(src string) bool {
+
+	if strings.Compare(p.OssPath, src) != 0 {
 		return false
 	}
 	return true
@@ -877,6 +943,8 @@ type DownloadFileResp struct {
 	BaseResp *base.BaseResp `thrift:"baseResp,1,required" frugal:"1,required,base.BaseResp" json:"baseResp"`
 	Ak       string         `thrift:"ak,2,required" frugal:"2,required,string" json:"ak"`
 	Sk       string         `thrift:"sk,3,required" frugal:"3,required,string" json:"sk"`
+	OssPath  string         `thrift:"ossPath,4,required" frugal:"4,required,string" json:"ossPath"`
+	Name     string         `thrift:"name,5,required" frugal:"5,required,string" json:"name"`
 }
 
 func NewDownloadFileResp() *DownloadFileResp {
@@ -903,6 +971,14 @@ func (p *DownloadFileResp) GetAk() (v string) {
 func (p *DownloadFileResp) GetSk() (v string) {
 	return p.Sk
 }
+
+func (p *DownloadFileResp) GetOssPath() (v string) {
+	return p.OssPath
+}
+
+func (p *DownloadFileResp) GetName() (v string) {
+	return p.Name
+}
 func (p *DownloadFileResp) SetBaseResp(val *base.BaseResp) {
 	p.BaseResp = val
 }
@@ -912,11 +988,19 @@ func (p *DownloadFileResp) SetAk(val string) {
 func (p *DownloadFileResp) SetSk(val string) {
 	p.Sk = val
 }
+func (p *DownloadFileResp) SetOssPath(val string) {
+	p.OssPath = val
+}
+func (p *DownloadFileResp) SetName(val string) {
+	p.Name = val
+}
 
 var fieldIDToName_DownloadFileResp = map[int16]string{
 	1: "baseResp",
 	2: "ak",
 	3: "sk",
+	4: "ossPath",
+	5: "name",
 }
 
 func (p *DownloadFileResp) IsSetBaseResp() bool {
@@ -930,6 +1014,8 @@ func (p *DownloadFileResp) Read(iprot thrift.TProtocol) (err error) {
 	var issetBaseResp bool = false
 	var issetAk bool = false
 	var issetSk bool = false
+	var issetOssPath bool = false
+	var issetName bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -978,6 +1064,28 @@ func (p *DownloadFileResp) Read(iprot thrift.TProtocol) (err error) {
 					goto SkipFieldError
 				}
 			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetOssPath = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 5:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetName = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
@@ -1004,6 +1112,16 @@ func (p *DownloadFileResp) Read(iprot thrift.TProtocol) (err error) {
 
 	if !issetSk {
 		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetOssPath {
+		fieldId = 4
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetName {
+		fieldId = 5
 		goto RequiredFieldNotSetError
 	}
 	return nil
@@ -1050,6 +1168,24 @@ func (p *DownloadFileResp) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *DownloadFileResp) ReadField4(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.OssPath = v
+	}
+	return nil
+}
+
+func (p *DownloadFileResp) ReadField5(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Name = v
+	}
+	return nil
+}
+
 func (p *DownloadFileResp) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("DownloadFileResp"); err != nil {
@@ -1066,6 +1202,14 @@ func (p *DownloadFileResp) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
+		if err = p.writeField5(oprot); err != nil {
+			fieldId = 5
 			goto WriteFieldError
 		}
 
@@ -1138,6 +1282,40 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
+func (p *DownloadFileResp) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("ossPath", thrift.STRING, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.OssPath); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *DownloadFileResp) writeField5(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("name", thrift.STRING, 5); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Name); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+}
+
 func (p *DownloadFileResp) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1160,6 +1338,12 @@ func (p *DownloadFileResp) DeepEqual(ano *DownloadFileResp) bool {
 	if !p.Field3DeepEqual(ano.Sk) {
 		return false
 	}
+	if !p.Field4DeepEqual(ano.OssPath) {
+		return false
+	}
+	if !p.Field5DeepEqual(ano.Name) {
+		return false
+	}
 	return true
 }
 
@@ -1180,6 +1364,20 @@ func (p *DownloadFileResp) Field2DeepEqual(src string) bool {
 func (p *DownloadFileResp) Field3DeepEqual(src string) bool {
 
 	if strings.Compare(p.Sk, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DownloadFileResp) Field4DeepEqual(src string) bool {
+
+	if strings.Compare(p.OssPath, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DownloadFileResp) Field5DeepEqual(src string) bool {
+
+	if strings.Compare(p.Name, src) != 0 {
 		return false
 	}
 	return true

@@ -13,6 +13,7 @@ type FileService struct {
 type IFileService interface {
 	UploadFile(ctx context.Context, req *file.UploadFileReq) (*file.UploadFileResp, error)
 	DownloadFile(ctx context.Context, req *file.DownloadFileReq) (*file.DownloadFileResp, error)
+	DeleteFile(ctx context.Context, req *file.DeleteFileReq) (*file.DeleteFileResp, error)
 }
 
 func NewFileService(repo repo.IRepository) IFileService {

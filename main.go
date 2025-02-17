@@ -62,7 +62,7 @@ func main() {
 		panic(err)
 	}
 	svr := fileservice.NewServer(
-		new(fileServiceImpl),
+		new(FileServiceImpl),
 		server.WithSuite(tracing.NewServerSuite()),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: serviceName}),
 		server.WithRegistry(r),

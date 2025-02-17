@@ -23,7 +23,7 @@ func GetContainer(env string) *Container {
 	traceStruct := trace.InitTrace(configConfig)
 	db := database.NewDatabase(configConfig)
 	iRepository := repo.NewRepository(db)
-	ifileService := file.NewfileService(iRepository)
-	container := NewContainer(configConfig, traceLogger, traceStruct, ifileService)
+	iFileService := file.NewFileService(iRepository)
+	container := NewContainer(configConfig, traceLogger, traceStruct, iFileService)
 	return container
 }

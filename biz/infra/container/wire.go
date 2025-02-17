@@ -26,7 +26,7 @@ func GetContainer(env string) *Container {
 		database.NewDatabase,
 
 		//service
-		file.NewfileService,
+		file.NewFileService,
 
 		NewContainer,
 	))

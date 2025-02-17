@@ -280,6 +280,7 @@ func (p *UploadFileResp) FastRead(buf []byte) (int, error) {
 	var issetAk bool = false
 	var issetSk bool = false
 	var issetKey bool = false
+	var issetOssPath bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -356,6 +357,21 @@ func (p *UploadFileResp) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 5:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField5(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetOssPath = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -393,6 +409,11 @@ func (p *UploadFileResp) FastRead(buf []byte) (int, error) {
 
 	if !issetKey {
 		fieldId = 4
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetOssPath {
+		fieldId = 5
 		goto RequiredFieldNotSetError
 	}
 	return offset, nil
@@ -467,6 +488,20 @@ func (p *UploadFileResp) FastReadField4(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *UploadFileResp) FastReadField5(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.OssPath = v
+
+	}
+	return offset, nil
+}
+
 // for compatibility
 func (p *UploadFileResp) FastWrite(buf []byte) int {
 	return 0
@@ -480,6 +515,7 @@ func (p *UploadFileResp) FastWriteNocopy(buf []byte, binaryWriter bthrift.Binary
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 		offset += p.fastWriteField4(buf[offset:], binaryWriter)
+		offset += p.fastWriteField5(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -494,6 +530,7 @@ func (p *UploadFileResp) BLength() int {
 		l += p.field2Length()
 		l += p.field3Length()
 		l += p.field4Length()
+		l += p.field5Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -535,6 +572,15 @@ func (p *UploadFileResp) fastWriteField4(buf []byte, binaryWriter bthrift.Binary
 	return offset
 }
 
+func (p *UploadFileResp) fastWriteField5(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "ossPath", thrift.STRING, 5)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.OssPath)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
 func (p *UploadFileResp) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("baseResp", thrift.STRUCT, 1)
@@ -565,6 +611,15 @@ func (p *UploadFileResp) field4Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("key", thrift.STRING, 4)
 	l += bthrift.Binary.StringLengthNocopy(p.Key)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *UploadFileResp) field5Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("ossPath", thrift.STRING, 5)
+	l += bthrift.Binary.StringLengthNocopy(p.OssPath)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -717,6 +772,8 @@ func (p *DownloadFileResp) FastRead(buf []byte) (int, error) {
 	var issetBaseResp bool = false
 	var issetAk bool = false
 	var issetSk bool = false
+	var issetOssPath bool = false
+	var issetName bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -778,6 +835,36 @@ func (p *DownloadFileResp) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField4(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetOssPath = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 5:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField5(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetName = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -810,6 +897,16 @@ func (p *DownloadFileResp) FastRead(buf []byte) (int, error) {
 
 	if !issetSk {
 		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetOssPath {
+		fieldId = 4
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetName {
+		fieldId = 5
 		goto RequiredFieldNotSetError
 	}
 	return offset, nil
@@ -870,6 +967,34 @@ func (p *DownloadFileResp) FastReadField3(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *DownloadFileResp) FastReadField4(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.OssPath = v
+
+	}
+	return offset, nil
+}
+
+func (p *DownloadFileResp) FastReadField5(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.Name = v
+
+	}
+	return offset, nil
+}
+
 // for compatibility
 func (p *DownloadFileResp) FastWrite(buf []byte) int {
 	return 0
@@ -882,6 +1007,8 @@ func (p *DownloadFileResp) FastWriteNocopy(buf []byte, binaryWriter bthrift.Bina
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 		offset += p.fastWriteField3(buf[offset:], binaryWriter)
+		offset += p.fastWriteField4(buf[offset:], binaryWriter)
+		offset += p.fastWriteField5(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -895,6 +1022,8 @@ func (p *DownloadFileResp) BLength() int {
 		l += p.field1Length()
 		l += p.field2Length()
 		l += p.field3Length()
+		l += p.field4Length()
+		l += p.field5Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -927,6 +1056,24 @@ func (p *DownloadFileResp) fastWriteField3(buf []byte, binaryWriter bthrift.Bina
 	return offset
 }
 
+func (p *DownloadFileResp) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "ossPath", thrift.STRING, 4)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.OssPath)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *DownloadFileResp) fastWriteField5(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "name", thrift.STRING, 5)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Name)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
 func (p *DownloadFileResp) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("baseResp", thrift.STRUCT, 1)
@@ -948,6 +1095,24 @@ func (p *DownloadFileResp) field3Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("sk", thrift.STRING, 3)
 	l += bthrift.Binary.StringLengthNocopy(p.Sk)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DownloadFileResp) field4Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("ossPath", thrift.STRING, 4)
+	l += bthrift.Binary.StringLengthNocopy(p.OssPath)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DownloadFileResp) field5Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("name", thrift.STRING, 5)
+	l += bthrift.Binary.StringLengthNocopy(p.Name)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l

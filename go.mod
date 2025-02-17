@@ -9,7 +9,6 @@ require (
 	github.com/kitex-contrib/obs-opentelemetry v0.2.8
 	github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20241108060226-a2d88c8d88e9
 	github.com/kitex-contrib/registry-etcd v0.2.5
-	github.com/li1553770945/personal-feedback-service v0.0.0-20250212175049-fb28ad2a4e37
 	go.opentelemetry.io/otel v1.32.0
 	go.opentelemetry.io/otel/trace v1.32.0
 	gopkg.in/yaml.v3 v3.0.1
