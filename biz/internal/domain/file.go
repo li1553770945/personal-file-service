@@ -6,7 +6,7 @@ import (
 
 type FileEntity struct {
 	do.BaseModel
-	Name          string `vd:"len($)>5" json:"name"`
+	Name          string
 	Key           string
 	OSSPath       string
 	MaxDownload   int32
