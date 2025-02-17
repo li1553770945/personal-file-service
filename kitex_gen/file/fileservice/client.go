@@ -12,7 +12,7 @@ import (
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	UploadFile(ctx context.Context, req *file.UploadFileReq, callOptions ...callopt.Option) (r *file.UploadFileResp, err error)
-	DownloadFileReq(ctx context.Context, req *file.DownloadFileReq, callOptions ...callopt.Option) (r *file.DownloadFileResp, err error)
+	DownloadFile(ctx context.Context, req *file.DownloadFileReq, callOptions ...callopt.Option) (r *file.DownloadFileResp, err error)
 	DeleteFile(ctx context.Context, req *file.DeleteFileReq, callOptions ...callopt.Option) (r *file.DeleteFileResp, err error)
 }
 
@@ -50,9 +50,9 @@ func (p *kFileServiceClient) UploadFile(ctx context.Context, req *file.UploadFil
 	return p.kClient.UploadFile(ctx, req)
 }
 
-func (p *kFileServiceClient) DownloadFileReq(ctx context.Context, req *file.DownloadFileReq, callOptions ...callopt.Option) (r *file.DownloadFileResp, err error) {
+func (p *kFileServiceClient) DownloadFile(ctx context.Context, req *file.DownloadFileReq, callOptions ...callopt.Option) (r *file.DownloadFileResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DownloadFileReq(ctx, req)
+	return p.kClient.DownloadFile(ctx, req)
 }
 
 func (p *kFileServiceClient) DeleteFile(ctx context.Context, req *file.DeleteFileReq, callOptions ...callopt.Option) (r *file.DeleteFileResp, err error) {

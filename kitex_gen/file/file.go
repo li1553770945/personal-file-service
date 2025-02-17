@@ -1738,7 +1738,7 @@ func (p *DeleteFileResp) Field1DeepEqual(src *base.BaseResp) bool {
 type FileService interface {
 	UploadFile(ctx context.Context, req *UploadFileReq) (r *UploadFileResp, err error)
 
-	DownloadFileReq(ctx context.Context, req *DownloadFileReq) (r *DownloadFileResp, err error)
+	DownloadFile(ctx context.Context, req *DownloadFileReq) (r *DownloadFileResp, err error)
 
 	DeleteFile(ctx context.Context, req *DeleteFileReq) (r *DeleteFileResp, err error)
 }
@@ -1778,11 +1778,11 @@ func (p *FileServiceClient) UploadFile(ctx context.Context, req *UploadFileReq) 
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *FileServiceClient) DownloadFileReq(ctx context.Context, req *DownloadFileReq) (r *DownloadFileResp, err error) {
-	var _args FileServiceDownloadFileReqArgs
+func (p *FileServiceClient) DownloadFile(ctx context.Context, req *DownloadFileReq) (r *DownloadFileResp, err error) {
+	var _args FileServiceDownloadFileArgs
 	_args.Req = req
-	var _result FileServiceDownloadFileReqResult
-	if err = p.Client_().Call(ctx, "DownloadFileReq", &_args, &_result); err != nil {
+	var _result FileServiceDownloadFileResult
+	if err = p.Client_().Call(ctx, "DownloadFile", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -1818,7 +1818,7 @@ func (p *FileServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFuncti
 func NewFileServiceProcessor(handler FileService) *FileServiceProcessor {
 	self := &FileServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
 	self.AddToProcessorMap("UploadFile", &fileServiceProcessorUploadFile{handler: handler})
-	self.AddToProcessorMap("DownloadFileReq", &fileServiceProcessorDownloadFileReq{handler: handler})
+	self.AddToProcessorMap("DownloadFile", &fileServiceProcessorDownloadFile{handler: handler})
 	self.AddToProcessorMap("DeleteFile", &fileServiceProcessorDeleteFile{handler: handler})
 	return self
 }
@@ -1888,16 +1888,16 @@ func (p *fileServiceProcessorUploadFile) Process(ctx context.Context, seqId int3
 	return true, err
 }
 
-type fileServiceProcessorDownloadFileReq struct {
+type fileServiceProcessorDownloadFile struct {
 	handler FileService
 }
 
-func (p *fileServiceProcessorDownloadFileReq) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FileServiceDownloadFileReqArgs{}
+func (p *fileServiceProcessorDownloadFile) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FileServiceDownloadFileArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("DownloadFileReq", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("DownloadFile", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -1906,11 +1906,11 @@ func (p *fileServiceProcessorDownloadFileReq) Process(ctx context.Context, seqId
 
 	iprot.ReadMessageEnd()
 	var err2 error
-	result := FileServiceDownloadFileReqResult{}
+	result := FileServiceDownloadFileResult{}
 	var retval *DownloadFileResp
-	if retval, err2 = p.handler.DownloadFileReq(ctx, args.Req); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing DownloadFileReq: "+err2.Error())
-		oprot.WriteMessageBegin("DownloadFileReq", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.DownloadFile(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing DownloadFile: "+err2.Error())
+		oprot.WriteMessageBegin("DownloadFile", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -1918,7 +1918,7 @@ func (p *fileServiceProcessorDownloadFileReq) Process(ctx context.Context, seqId
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("DownloadFileReq", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("DownloadFile", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -2330,39 +2330,39 @@ func (p *FileServiceUploadFileResult) Field0DeepEqual(src *UploadFileResp) bool 
 	return true
 }
 
-type FileServiceDownloadFileReqArgs struct {
+type FileServiceDownloadFileArgs struct {
 	Req *DownloadFileReq `thrift:"req,1" frugal:"1,default,DownloadFileReq" json:"req"`
 }
 
-func NewFileServiceDownloadFileReqArgs() *FileServiceDownloadFileReqArgs {
-	return &FileServiceDownloadFileReqArgs{}
+func NewFileServiceDownloadFileArgs() *FileServiceDownloadFileArgs {
+	return &FileServiceDownloadFileArgs{}
 }
 
-func (p *FileServiceDownloadFileReqArgs) InitDefault() {
-	*p = FileServiceDownloadFileReqArgs{}
+func (p *FileServiceDownloadFileArgs) InitDefault() {
+	*p = FileServiceDownloadFileArgs{}
 }
 
-var FileServiceDownloadFileReqArgs_Req_DEFAULT *DownloadFileReq
+var FileServiceDownloadFileArgs_Req_DEFAULT *DownloadFileReq
 
-func (p *FileServiceDownloadFileReqArgs) GetReq() (v *DownloadFileReq) {
+func (p *FileServiceDownloadFileArgs) GetReq() (v *DownloadFileReq) {
 	if !p.IsSetReq() {
-		return FileServiceDownloadFileReqArgs_Req_DEFAULT
+		return FileServiceDownloadFileArgs_Req_DEFAULT
 	}
 	return p.Req
 }
-func (p *FileServiceDownloadFileReqArgs) SetReq(val *DownloadFileReq) {
+func (p *FileServiceDownloadFileArgs) SetReq(val *DownloadFileReq) {
 	p.Req = val
 }
 
-var fieldIDToName_FileServiceDownloadFileReqArgs = map[int16]string{
+var fieldIDToName_FileServiceDownloadFileArgs = map[int16]string{
 	1: "req",
 }
 
-func (p *FileServiceDownloadFileReqArgs) IsSetReq() bool {
+func (p *FileServiceDownloadFileArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *FileServiceDownloadFileReqArgs) Read(iprot thrift.TProtocol) (err error) {
+func (p *FileServiceDownloadFileArgs) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -2411,7 +2411,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_FileServiceDownloadFileReqArgs[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_FileServiceDownloadFileArgs[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -2421,7 +2421,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *FileServiceDownloadFileReqArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FileServiceDownloadFileArgs) ReadField1(iprot thrift.TProtocol) error {
 	p.Req = NewDownloadFileReq()
 	if err := p.Req.Read(iprot); err != nil {
 		return err
@@ -2429,9 +2429,9 @@ func (p *FileServiceDownloadFileReqArgs) ReadField1(iprot thrift.TProtocol) erro
 	return nil
 }
 
-func (p *FileServiceDownloadFileReqArgs) Write(oprot thrift.TProtocol) (err error) {
+func (p *FileServiceDownloadFileArgs) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("DownloadFileReq_args"); err != nil {
+	if err = oprot.WriteStructBegin("DownloadFile_args"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -2458,7 +2458,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *FileServiceDownloadFileReqArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FileServiceDownloadFileArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -2475,14 +2475,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *FileServiceDownloadFileReqArgs) String() string {
+func (p *FileServiceDownloadFileArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FileServiceDownloadFileReqArgs(%+v)", *p)
+	return fmt.Sprintf("FileServiceDownloadFileArgs(%+v)", *p)
 }
 
-func (p *FileServiceDownloadFileReqArgs) DeepEqual(ano *FileServiceDownloadFileReqArgs) bool {
+func (p *FileServiceDownloadFileArgs) DeepEqual(ano *FileServiceDownloadFileArgs) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -2494,7 +2494,7 @@ func (p *FileServiceDownloadFileReqArgs) DeepEqual(ano *FileServiceDownloadFileR
 	return true
 }
 
-func (p *FileServiceDownloadFileReqArgs) Field1DeepEqual(src *DownloadFileReq) bool {
+func (p *FileServiceDownloadFileArgs) Field1DeepEqual(src *DownloadFileReq) bool {
 
 	if !p.Req.DeepEqual(src) {
 		return false
@@ -2502,39 +2502,39 @@ func (p *FileServiceDownloadFileReqArgs) Field1DeepEqual(src *DownloadFileReq) b
 	return true
 }
 
-type FileServiceDownloadFileReqResult struct {
+type FileServiceDownloadFileResult struct {
 	Success *DownloadFileResp `thrift:"success,0,optional" frugal:"0,optional,DownloadFileResp" json:"success,omitempty"`
 }
 
-func NewFileServiceDownloadFileReqResult() *FileServiceDownloadFileReqResult {
-	return &FileServiceDownloadFileReqResult{}
+func NewFileServiceDownloadFileResult() *FileServiceDownloadFileResult {
+	return &FileServiceDownloadFileResult{}
 }
 
-func (p *FileServiceDownloadFileReqResult) InitDefault() {
-	*p = FileServiceDownloadFileReqResult{}
+func (p *FileServiceDownloadFileResult) InitDefault() {
+	*p = FileServiceDownloadFileResult{}
 }
 
-var FileServiceDownloadFileReqResult_Success_DEFAULT *DownloadFileResp
+var FileServiceDownloadFileResult_Success_DEFAULT *DownloadFileResp
 
-func (p *FileServiceDownloadFileReqResult) GetSuccess() (v *DownloadFileResp) {
+func (p *FileServiceDownloadFileResult) GetSuccess() (v *DownloadFileResp) {
 	if !p.IsSetSuccess() {
-		return FileServiceDownloadFileReqResult_Success_DEFAULT
+		return FileServiceDownloadFileResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *FileServiceDownloadFileReqResult) SetSuccess(x interface{}) {
+func (p *FileServiceDownloadFileResult) SetSuccess(x interface{}) {
 	p.Success = x.(*DownloadFileResp)
 }
 
-var fieldIDToName_FileServiceDownloadFileReqResult = map[int16]string{
+var fieldIDToName_FileServiceDownloadFileResult = map[int16]string{
 	0: "success",
 }
 
-func (p *FileServiceDownloadFileReqResult) IsSetSuccess() bool {
+func (p *FileServiceDownloadFileResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FileServiceDownloadFileReqResult) Read(iprot thrift.TProtocol) (err error) {
+func (p *FileServiceDownloadFileResult) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -2583,7 +2583,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_FileServiceDownloadFileReqResult[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_FileServiceDownloadFileResult[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -2593,7 +2593,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *FileServiceDownloadFileReqResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FileServiceDownloadFileResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = NewDownloadFileResp()
 	if err := p.Success.Read(iprot); err != nil {
 		return err
@@ -2601,9 +2601,9 @@ func (p *FileServiceDownloadFileReqResult) ReadField0(iprot thrift.TProtocol) er
 	return nil
 }
 
-func (p *FileServiceDownloadFileReqResult) Write(oprot thrift.TProtocol) (err error) {
+func (p *FileServiceDownloadFileResult) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("DownloadFileReq_result"); err != nil {
+	if err = oprot.WriteStructBegin("DownloadFile_result"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -2630,7 +2630,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *FileServiceDownloadFileReqResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FileServiceDownloadFileResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			goto WriteFieldBeginError
@@ -2649,14 +2649,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
 }
 
-func (p *FileServiceDownloadFileReqResult) String() string {
+func (p *FileServiceDownloadFileResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FileServiceDownloadFileReqResult(%+v)", *p)
+	return fmt.Sprintf("FileServiceDownloadFileResult(%+v)", *p)
 }
 
-func (p *FileServiceDownloadFileReqResult) DeepEqual(ano *FileServiceDownloadFileReqResult) bool {
+func (p *FileServiceDownloadFileResult) DeepEqual(ano *FileServiceDownloadFileResult) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -2668,7 +2668,7 @@ func (p *FileServiceDownloadFileReqResult) DeepEqual(ano *FileServiceDownloadFil
 	return true
 }
 
-func (p *FileServiceDownloadFileReqResult) Field0DeepEqual(src *DownloadFileResp) bool {
+func (p *FileServiceDownloadFileResult) Field0DeepEqual(src *DownloadFileResp) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false

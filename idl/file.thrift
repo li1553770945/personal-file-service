@@ -34,6 +34,6 @@ struct DeleteFileResp{
 }
 service FileService {
     UploadFileResp UploadFile(UploadFileReq req);
-    DownloadFileResp DownloadFileReq(DownloadFileReq req);
+    DownloadFileResp DownloadFile(DownloadFileReq req);
     DeleteFileResp DeleteFile(DeleteFileReq req);
 }

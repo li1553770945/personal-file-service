@@ -19,9 +19,9 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "FileService"
 	handlerType := (*file.FileService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"UploadFile":      kitex.NewMethodInfo(uploadFileHandler, newFileServiceUploadFileArgs, newFileServiceUploadFileResult, false),
-		"DownloadFileReq": kitex.NewMethodInfo(downloadFileReqHandler, newFileServiceDownloadFileReqArgs, newFileServiceDownloadFileReqResult, false),
-		"DeleteFile":      kitex.NewMethodInfo(deleteFileHandler, newFileServiceDeleteFileArgs, newFileServiceDeleteFileResult, false),
+		"UploadFile":   kitex.NewMethodInfo(uploadFileHandler, newFileServiceUploadFileArgs, newFileServiceUploadFileResult, false),
+		"DownloadFile": kitex.NewMethodInfo(downloadFileHandler, newFileServiceDownloadFileArgs, newFileServiceDownloadFileResult, false),
+		"DeleteFile":   kitex.NewMethodInfo(deleteFileHandler, newFileServiceDeleteFileArgs, newFileServiceDeleteFileResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName":     "file",
@@ -56,22 +56,22 @@ func newFileServiceUploadFileResult() interface{} {
 	return file.NewFileServiceUploadFileResult()
 }
 
-func downloadFileReqHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*file.FileServiceDownloadFileReqArgs)
-	realResult := result.(*file.FileServiceDownloadFileReqResult)
-	success, err := handler.(file.FileService).DownloadFileReq(ctx, realArg.Req)
+func downloadFileHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*file.FileServiceDownloadFileArgs)
+	realResult := result.(*file.FileServiceDownloadFileResult)
+	success, err := handler.(file.FileService).DownloadFile(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newFileServiceDownloadFileReqArgs() interface{} {
-	return file.NewFileServiceDownloadFileReqArgs()
+func newFileServiceDownloadFileArgs() interface{} {
+	return file.NewFileServiceDownloadFileArgs()
 }
 
-func newFileServiceDownloadFileReqResult() interface{} {
-	return file.NewFileServiceDownloadFileReqResult()
+func newFileServiceDownloadFileResult() interface{} {
+	return file.NewFileServiceDownloadFileResult()
 }
 
 func deleteFileHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -112,11 +112,11 @@ func (p *kClient) UploadFile(ctx context.Context, req *file.UploadFileReq) (r *f
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) DownloadFileReq(ctx context.Context, req *file.DownloadFileReq) (r *file.DownloadFileResp, err error) {
-	var _args file.FileServiceDownloadFileReqArgs
+func (p *kClient) DownloadFile(ctx context.Context, req *file.DownloadFileReq) (r *file.DownloadFileResp, err error) {
+	var _args file.FileServiceDownloadFileArgs
 	_args.Req = req
-	var _result file.FileServiceDownloadFileReqResult
-	if err = p.c.Call(ctx, "DownloadFileReq", &_args, &_result); err != nil {
+	var _result file.FileServiceDownloadFileResult
+	if err = p.c.Call(ctx, "DownloadFile", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

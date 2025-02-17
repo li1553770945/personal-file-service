@@ -6,7 +6,7 @@ import (
 	"github.com/li1553770945/personal-file-service/kitex_gen/file"
 )
 
-// filesServiceImpl implements the last service interface defined in the IDL.
+// FileServiceImpl FilesServiceImpl implements the last service interface defined in the IDL.
 type FileServiceImpl struct{}
 
 // UploadFile implements the FileServiceImpl interface.
@@ -16,8 +16,8 @@ func (s *FileServiceImpl) UploadFile(ctx context.Context, req *file.UploadFileRe
 	return
 }
 
-// DownloadFileReq implements the FileServiceImpl interface.
-func (s *FileServiceImpl) DownloadFileReq(ctx context.Context, req *file.DownloadFileReq) (resp *file.DownloadFileResp, err error) {
+// DownloadFile implements the FileServiceImpl interface.
+func (s *FileServiceImpl) DownloadFile(ctx context.Context, req *file.DownloadFileReq) (resp *file.DownloadFileResp, err error) {
 	APP := container.GetGlobalContainer()
 	resp, err = APP.FileService.DownloadFile(ctx, req)
 	return

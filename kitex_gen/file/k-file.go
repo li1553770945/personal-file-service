@@ -1649,7 +1649,7 @@ func (p *FileServiceUploadFileResult) field0Length() int {
 	return l
 }
 
-func (p *FileServiceDownloadFileReqArgs) FastRead(buf []byte) (int, error) {
+func (p *FileServiceDownloadFileArgs) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -1711,7 +1711,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_FileServiceDownloadFileReqArgs[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_FileServiceDownloadFileArgs[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 ReadFieldEndError:
@@ -1720,7 +1720,7 @@ ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *FileServiceDownloadFileReqArgs) FastReadField1(buf []byte) (int, error) {
+func (p *FileServiceDownloadFileArgs) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	tmp := NewDownloadFileReq()
@@ -1734,13 +1734,13 @@ func (p *FileServiceDownloadFileReqArgs) FastReadField1(buf []byte) (int, error)
 }
 
 // for compatibility
-func (p *FileServiceDownloadFileReqArgs) FastWrite(buf []byte) int {
+func (p *FileServiceDownloadFileArgs) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *FileServiceDownloadFileReqArgs) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *FileServiceDownloadFileArgs) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "DownloadFileReq_args")
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "DownloadFile_args")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 	}
@@ -1749,9 +1749,9 @@ func (p *FileServiceDownloadFileReqArgs) FastWriteNocopy(buf []byte, binaryWrite
 	return offset
 }
 
-func (p *FileServiceDownloadFileReqArgs) BLength() int {
+func (p *FileServiceDownloadFileArgs) BLength() int {
 	l := 0
-	l += bthrift.Binary.StructBeginLength("DownloadFileReq_args")
+	l += bthrift.Binary.StructBeginLength("DownloadFile_args")
 	if p != nil {
 		l += p.field1Length()
 	}
@@ -1760,7 +1760,7 @@ func (p *FileServiceDownloadFileReqArgs) BLength() int {
 	return l
 }
 
-func (p *FileServiceDownloadFileReqArgs) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *FileServiceDownloadFileArgs) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "req", thrift.STRUCT, 1)
 	offset += p.Req.FastWriteNocopy(buf[offset:], binaryWriter)
@@ -1768,7 +1768,7 @@ func (p *FileServiceDownloadFileReqArgs) fastWriteField1(buf []byte, binaryWrite
 	return offset
 }
 
-func (p *FileServiceDownloadFileReqArgs) field1Length() int {
+func (p *FileServiceDownloadFileArgs) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("req", thrift.STRUCT, 1)
 	l += p.Req.BLength()
@@ -1776,7 +1776,7 @@ func (p *FileServiceDownloadFileReqArgs) field1Length() int {
 	return l
 }
 
-func (p *FileServiceDownloadFileReqResult) FastRead(buf []byte) (int, error) {
+func (p *FileServiceDownloadFileResult) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -1838,7 +1838,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_FileServiceDownloadFileReqResult[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_FileServiceDownloadFileResult[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 ReadFieldEndError:
@@ -1847,7 +1847,7 @@ ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *FileServiceDownloadFileReqResult) FastReadField0(buf []byte) (int, error) {
+func (p *FileServiceDownloadFileResult) FastReadField0(buf []byte) (int, error) {
 	offset := 0
 
 	tmp := NewDownloadFileResp()
@@ -1861,13 +1861,13 @@ func (p *FileServiceDownloadFileReqResult) FastReadField0(buf []byte) (int, erro
 }
 
 // for compatibility
-func (p *FileServiceDownloadFileReqResult) FastWrite(buf []byte) int {
+func (p *FileServiceDownloadFileResult) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *FileServiceDownloadFileReqResult) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *FileServiceDownloadFileResult) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "DownloadFileReq_result")
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "DownloadFile_result")
 	if p != nil {
 		offset += p.fastWriteField0(buf[offset:], binaryWriter)
 	}
@@ -1876,9 +1876,9 @@ func (p *FileServiceDownloadFileReqResult) FastWriteNocopy(buf []byte, binaryWri
 	return offset
 }
 
-func (p *FileServiceDownloadFileReqResult) BLength() int {
+func (p *FileServiceDownloadFileResult) BLength() int {
 	l := 0
-	l += bthrift.Binary.StructBeginLength("DownloadFileReq_result")
+	l += bthrift.Binary.StructBeginLength("DownloadFile_result")
 	if p != nil {
 		l += p.field0Length()
 	}
@@ -1887,7 +1887,7 @@ func (p *FileServiceDownloadFileReqResult) BLength() int {
 	return l
 }
 
-func (p *FileServiceDownloadFileReqResult) fastWriteField0(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *FileServiceDownloadFileResult) fastWriteField0(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	if p.IsSetSuccess() {
 		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "success", thrift.STRUCT, 0)
@@ -1897,7 +1897,7 @@ func (p *FileServiceDownloadFileReqResult) fastWriteField0(buf []byte, binaryWri
 	return offset
 }
 
-func (p *FileServiceDownloadFileReqResult) field0Length() int {
+func (p *FileServiceDownloadFileResult) field0Length() int {
 	l := 0
 	if p.IsSetSuccess() {
 		l += bthrift.Binary.FieldBeginLength("success", thrift.STRUCT, 0)
@@ -2173,11 +2173,11 @@ func (p *FileServiceUploadFileResult) GetResult() interface{} {
 	return p.Success
 }
 
-func (p *FileServiceDownloadFileReqArgs) GetFirstArgument() interface{} {
+func (p *FileServiceDownloadFileArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
 
-func (p *FileServiceDownloadFileReqResult) GetResult() interface{} {
+func (p *FileServiceDownloadFileResult) GetResult() interface{} {
 	return p.Success
 }
 
