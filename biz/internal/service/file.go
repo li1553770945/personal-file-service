@@ -9,6 +9,7 @@ import (
 	"github.com/li1553770945/personal-file-service/biz/internal/assembler"
 	"github.com/li1553770945/personal-file-service/kitex_gen/base"
 	"github.com/li1553770945/personal-file-service/kitex_gen/file"
+	"gorm.io/gorm"
 	"math/rand"
 	"net/http"
 	"path/filepath"
@@ -85,7 +86,7 @@ func (s *FileService) UploadFile(ctx context.Context, req *file.UploadFileReq) (
 		return resp, nil
 	}
 
-	signedUrl, err := s.GetSignedUrl(ctx, http.MethodPost, entity.OSSPath)
+	signedUrl, err := s.GetSignedUrl(ctx, http.MethodPut, entity.OSSPath)
 	if err != nil {
 		resp = &file.UploadFileResp{
 			BaseResp: &base.BaseResp{
@@ -138,6 +139,49 @@ func (s *FileService) DownloadFile(ctx context.Context, req *file.DownloadFileRe
 		klog.CtxInfof(ctx, "生成预签名url失败:%v", err.Error())
 		return resp, nil
 	}
+	if entity.MaxDownload != 0 {
+		entity.DownloadCount = entity.DownloadCount + 1
+		if entity.DownloadCount == entity.MaxDownload {
+
+			entity.ExpiredTime = gorm.DeletedAt{Time: time.Now(), Valid: true}
+			err = s.Repo.SaveFile(entity)
+			if err != nil {
+				resp = &file.DownloadFileResp{
+					BaseResp: &base.BaseResp{
+						Code:    constant.SystemError,
+						Message: "数据库访问错误",
+					},
+				}
+				klog.CtxInfof(ctx, "保存文件时数据库访问错误：%v", err.Error())
+				return nil, err
+			}
+			klog.CtxInfof(ctx, "文件过期被删除：%v", entity.Key)
+			err = s.Repo.RemoveFile(entity.Key)
+			if err != nil {
+				resp = &file.DownloadFileResp{
+					BaseResp: &base.BaseResp{
+						Code:    constant.SystemError,
+						Message: "删除文件时数据库访问错误",
+					},
+				}
+				return resp, nil
+			}
+		} else {
+			err = s.Repo.SaveFile(entity)
+			if err != nil {
+				resp = &file.DownloadFileResp{
+					BaseResp: &base.BaseResp{
+						Code:    constant.SystemError,
+						Message: "数据库访问错误",
+					},
+				}
+				klog.CtxInfof(ctx, "保存文件时数据库访问错误：%v", err.Error())
+				return nil, err
+			}
+		}
+
+	}
+
 	resp = &file.DownloadFileResp{
 		BaseResp: &base.BaseResp{
 			Code: constant.Success,
@@ -165,6 +209,28 @@ func (s *FileService) DeleteFile(ctx context.Context, req *file.DeleteFileReq) (
 			BaseResp: &base.BaseResp{
 				Code:    constant.NotFound,
 				Message: "未找到对应的文件，请检查文件key是否正确",
+			},
+		}
+		return resp, nil
+	}
+	_, err = s.CosClient.Object.Delete(context.Background(), entity.OSSPath)
+	if err != nil {
+		resp = &file.DeleteFileResp{
+			BaseResp: &base.BaseResp{
+				Code:    constant.SystemError,
+				Message: "删除oss文件出错",
+			},
+		}
+		klog.CtxErrorf(ctx, "删除oss文件出错:%v", err.Error())
+		return resp, nil
+	}
+	entity.DeleteOnOssTime = gorm.DeletedAt{Time: time.Now(), Valid: true}
+	err = s.Repo.SaveFile(entity)
+	if err != nil {
+		resp = &file.DeleteFileResp{
+			BaseResp: &base.BaseResp{
+				Code:    constant.SystemError,
+				Message: "删除文件时数据库访问错误",
 			},
 		}
 		return resp, nil
@@ -224,5 +290,5 @@ func (s *FileService) GetSignedUrl(ctx context.Context, method, name string) (st
 	if err != nil {
 		return "", err
 	}
-	return signedURL.Path, err
+	return signedURL.String(), err
 }

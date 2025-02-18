@@ -3,7 +3,7 @@ package repo
 import "github.com/li1553770945/personal-file-service/biz/internal/domain"
 
 func (Repo *Repository) RemoveFile(fileKey string) error {
-	err := Repo.DB.Delete(&domain.FileEntity{}, "file_key = ?", fileKey).Error
+	err := Repo.DB.Delete(&domain.FileEntity{}, "`key` = ?", fileKey).Error
 	if err != nil {
 		return err
 	}
@@ -21,7 +21,7 @@ func (Repo *Repository) SaveFile(entity *domain.FileEntity) error {
 }
 func (Repo *Repository) GetFile(fileKey string) (*domain.FileEntity, error) {
 	var entity domain.FileEntity
-	err := Repo.DB.Where("file_key = ?", fileKey).Find(&entity).Error
+	err := Repo.DB.Where("`key` = ?", fileKey).Find(&entity).Error
 	if err != nil {
 		return nil, err
 	}
