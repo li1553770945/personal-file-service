@@ -9,9 +9,11 @@ import (
 	"github.com/li1553770945/personal-file-service/biz/internal/assembler"
 	"github.com/li1553770945/personal-file-service/kitex_gen/base"
 	"github.com/li1553770945/personal-file-service/kitex_gen/file"
+	"github.com/tencentyun/cos-go-sdk-v5"
 	"gorm.io/gorm"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"time"
 	"unicode"
@@ -86,7 +88,7 @@ func (s *FileService) UploadFile(ctx context.Context, req *file.UploadFileReq) (
 		return resp, nil
 	}
 
-	signedUrl, err := s.GetSignedUrl(ctx, http.MethodPut, entity.OSSPath)
+	signedUrl, err := s.GetSignedUrl(ctx, http.MethodPut, entity.OSSPath, entity.Name)
 	if err != nil {
 		resp = &file.UploadFileResp{
 			BaseResp: &base.BaseResp{
@@ -128,7 +130,7 @@ func (s *FileService) DownloadFile(ctx context.Context, req *file.DownloadFileRe
 		return resp, nil
 	}
 
-	signedUrl, err := s.GetSignedUrl(ctx, http.MethodGet, entity.OSSPath)
+	signedUrl, err := s.GetSignedUrl(ctx, http.MethodGet, entity.OSSPath, entity.Name)
 	if err != nil {
 		resp = &file.DownloadFileResp{
 			BaseResp: &base.BaseResp{
@@ -315,8 +317,20 @@ func (s *FileService) generateFilePath(fileName string) string {
 	filePath := fmt.Sprintf("%d/%d/%d/%s", year, month, day, newFileName)
 	return filePath
 }
-func (s *FileService) GetSignedUrl(ctx context.Context, method, name string) (string, error) {
-	signedURL, err := s.CosClient.Object.GetPresignedURL(ctx, method, name, s.Config.CosConfig.Ak, s.Config.CosConfig.Sk, time.Hour, nil)
+func (s *FileService) GetSignedUrl(ctx context.Context, method, ossPath, name string) (string, error) {
+
+	opt := &cos.PresignedURLOptions{
+		// http 请求参数，传入的请求参数需与实际请求相同，能够防止用户篡改此 HTTP 请求的参数
+		Query: &url.Values{},
+		// http 请求头部，传入的请求头部需包含在实际请求中，能够防止用户篡改签入此处的 HTTP 请求头部
+		Header: &http.Header{},
+	}
+	if method == http.MethodGet {
+		opt.Query.Add("response-content-disposition", fmt.Sprintf("attachment; filename=%s", name))
+
+	}
+
+	signedURL, err := s.CosClient.Object.GetPresignedURL(ctx, method, ossPath, s.Config.CosConfig.Ak, s.Config.CosConfig.Sk, time.Hour, opt)
 	if err != nil {
 		return "", err
 	}
