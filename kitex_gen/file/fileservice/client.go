@@ -14,6 +14,7 @@ type Client interface {
 	UploadFile(ctx context.Context, req *file.UploadFileReq, callOptions ...callopt.Option) (r *file.UploadFileResp, err error)
 	DownloadFile(ctx context.Context, req *file.DownloadFileReq, callOptions ...callopt.Option) (r *file.DownloadFileResp, err error)
 	DeleteFile(ctx context.Context, req *file.DeleteFileReq, callOptions ...callopt.Option) (r *file.DeleteFileResp, err error)
+	FileInfo(ctx context.Context, req *file.FileInfoReq, callOptions ...callopt.Option) (r *file.FileInfoResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -58,4 +59,9 @@ func (p *kFileServiceClient) DownloadFile(ctx context.Context, req *file.Downloa
 func (p *kFileServiceClient) DeleteFile(ctx context.Context, req *file.DeleteFileReq, callOptions ...callopt.Option) (r *file.DeleteFileResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.DeleteFile(ctx, req)
+}
+
+func (p *kFileServiceClient) FileInfo(ctx context.Context, req *file.FileInfoReq, callOptions ...callopt.Option) (r *file.FileInfoResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.FileInfo(ctx, req)
 }

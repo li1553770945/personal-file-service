@@ -18,7 +18,7 @@ import (
 )
 
 func (s *FileService) UploadFile(ctx context.Context, req *file.UploadFileReq) (resp *file.UploadFileResp, err error) {
-	if req.Key == nil {
+	if req.Key == nil || *req.Key == "" {
 		for { // 防止已有相同key
 			Key := s.generateKey(constant.DEFAULT_KEY_LENGTH)
 			req.Key = &Key
@@ -253,6 +253,36 @@ func (s *FileService) DeleteFile(ctx context.Context, req *file.DeleteFileReq) (
 	return resp, nil
 }
 
+func (s *FileService) FileInfo(ctx context.Context, req *file.FileInfoReq) (resp *file.FileInfoResp, err error) {
+	entity, err := s.Repo.GetFile(req.GetKey())
+	if err != nil {
+		resp = &file.FileInfoResp{
+			BaseResp: &base.BaseResp{
+				Code:    constant.SystemError,
+				Message: "数据库访问错误",
+			},
+		}
+		klog.CtxInfof(ctx, "数据库访问错误：%v", err.Error())
+		return resp, nil
+	}
+	if entity.ID == 0 {
+		resp = &file.FileInfoResp{
+			BaseResp: &base.BaseResp{
+				Code:    constant.NotFound,
+				Message: "未找到对应的文件，请检查文件key是否正确",
+			},
+		}
+		return resp, nil
+	}
+	resp = &file.FileInfoResp{
+		BaseResp: &base.BaseResp{
+			Code: constant.Success,
+		},
+		Name:      entity.Name,
+		CreatedAt: entity.CreatedAt.Format("2006-01-02 15:04:05"),
+	}
+	return resp, nil
+}
 func (s *FileService) generateKey(length int32) (key string) {
 	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 	b := make([]rune, length)

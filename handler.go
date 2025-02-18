@@ -29,3 +29,10 @@ func (s *FileServiceImpl) DeleteFile(ctx context.Context, req *file.DeleteFileRe
 	resp, err = APP.FileService.DeleteFile(ctx, req)
 	return
 }
+
+// FileInfo implements the FileServiceImpl interface.
+func (s *FileServiceImpl) FileInfo(ctx context.Context, req *file.FileInfoReq) (resp *file.FileInfoResp, err error) {
+	APP := container.GetGlobalContainer()
+	resp, err = APP.FileService.FileInfo(ctx, req)
+	return
+}

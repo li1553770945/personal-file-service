@@ -28,8 +28,23 @@ struct DeleteFileReq{
 struct DeleteFileResp{
     1: required base.BaseResp baseResp
 }
+
+struct FileInfoReq{
+    1: required string key;
+}
+struct FileInfoResp{
+    1: required base.BaseResp baseResp
+    2: required string name;
+    3: required string uploader_name;
+    4: required i32 uploader_uid;
+    5: required string created_at;
+}
+
+
 service FileService {
     UploadFileResp UploadFile(UploadFileReq req);
     DownloadFileResp DownloadFile(DownloadFileReq req);
     DeleteFileResp DeleteFile(DeleteFileReq req);
+    FileInfoResp FileInfo(FileInfoReq req);
+
 }

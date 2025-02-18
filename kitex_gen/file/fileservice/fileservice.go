@@ -22,6 +22,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"UploadFile":   kitex.NewMethodInfo(uploadFileHandler, newFileServiceUploadFileArgs, newFileServiceUploadFileResult, false),
 		"DownloadFile": kitex.NewMethodInfo(downloadFileHandler, newFileServiceDownloadFileArgs, newFileServiceDownloadFileResult, false),
 		"DeleteFile":   kitex.NewMethodInfo(deleteFileHandler, newFileServiceDeleteFileArgs, newFileServiceDeleteFileResult, false),
+		"FileInfo":     kitex.NewMethodInfo(fileInfoHandler, newFileServiceFileInfoArgs, newFileServiceFileInfoResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName":     "file",
@@ -92,6 +93,24 @@ func newFileServiceDeleteFileResult() interface{} {
 	return file.NewFileServiceDeleteFileResult()
 }
 
+func fileInfoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*file.FileServiceFileInfoArgs)
+	realResult := result.(*file.FileServiceFileInfoResult)
+	success, err := handler.(file.FileService).FileInfo(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newFileServiceFileInfoArgs() interface{} {
+	return file.NewFileServiceFileInfoArgs()
+}
+
+func newFileServiceFileInfoResult() interface{} {
+	return file.NewFileServiceFileInfoResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -127,6 +146,16 @@ func (p *kClient) DeleteFile(ctx context.Context, req *file.DeleteFileReq) (r *f
 	_args.Req = req
 	var _result file.FileServiceDeleteFileResult
 	if err = p.c.Call(ctx, "DeleteFile", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) FileInfo(ctx context.Context, req *file.FileInfoReq) (r *file.FileInfoResp, err error) {
+	var _args file.FileServiceFileInfoArgs
+	_args.Req = req
+	var _result file.FileServiceFileInfoResult
+	if err = p.c.Call(ctx, "FileInfo", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

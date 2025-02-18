@@ -18,6 +18,7 @@ type IFileService interface {
 	UploadFile(ctx context.Context, req *file.UploadFileReq) (*file.UploadFileResp, error)
 	DownloadFile(ctx context.Context, req *file.DownloadFileReq) (*file.DownloadFileResp, error)
 	DeleteFile(ctx context.Context, req *file.DeleteFileReq) (*file.DeleteFileResp, error)
+	FileInfo(ctx context.Context, req *file.FileInfoReq) (resp *file.FileInfoResp, err error)
 }
 
 func NewFileService(repo repo.IRepository, config *config.Config, cosClient *cos.Client) IFileService {
