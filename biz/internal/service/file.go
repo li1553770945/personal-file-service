@@ -13,10 +13,10 @@ import (
 
 func (s *FileService) UploadFile(ctx context.Context, req *file.UploadFileReq) (resp *file.UploadFileResp, err error) {
 	if req.Key == nil {
-		Key := s.generateKey()
-		req.Key = &Key
-		entity, err := s.Repo.GetFile(Key)
 		for { // 防止已有相同key
+			Key := s.generateKey()
+			req.Key = &Key
+			entity, err := s.Repo.GetFile(Key)
 			if err != nil {
 				resp = &file.UploadFileResp{
 					BaseResp: &base.BaseResp{
@@ -24,16 +24,13 @@ func (s *FileService) UploadFile(ctx context.Context, req *file.UploadFileReq) (
 						Message: "数据库访问错误",
 					},
 				}
-				klog.CtxInfof(ctx, "查询已有文件时数据库访问错误：", err.Error())
+				klog.CtxInfof(ctx, "查询已有文件时数据库访问错误：%v", err.Error())
 				return resp, nil
 			}
 			// 如果没有
 			if entity.ID == 0 {
 				break
 			}
-			Key := s.generateKey()
-			req.Key = &Key
-			entity, err = s.Repo.GetFile(Key)
 		}
 	} else if !s.IsAlphanumeric(*req.Key) { // 用户提交了key，检查是否合法
 		resp := &file.UploadFileResp{
@@ -90,7 +87,7 @@ func (s *FileService) DownloadFile(ctx context.Context, req *file.DownloadFileRe
 		klog.CtxInfof(ctx, "数据库访问错误：%v", err.Error())
 		return resp, nil
 	}
-	if entity == nil {
+	if entity.ID == 0 {
 		resp = &file.DownloadFileResp{
 			BaseResp: &base.BaseResp{
 				Code:    constant.NotFound,
@@ -134,7 +131,7 @@ func (s *FileService) DeleteFile(ctx context.Context, req *file.DeleteFileReq) (
 		klog.CtxInfof(ctx, "数据库访问错误：%v", err.Error())
 		return resp, nil
 	}
-	if entity == nil {
+	if entity.ID == 0 {
 		resp = &file.DeleteFileResp{
 			BaseResp: &base.BaseResp{
 				Code:    constant.NotFound,
@@ -162,7 +159,7 @@ func (s *FileService) DeleteFile(ctx context.Context, req *file.DeleteFileReq) (
 }
 
 func (s *FileService) getAkSk(ctx context.Context) (ak string, sk string, err error) {
-	return "", "", nil
+	return "ak", "sk", nil
 }
 
 func (s *FileService) generateKey() (key string) {
