@@ -9,10 +9,8 @@ struct UploadFileReq{
 
 struct UploadFileResp{
     1: required base.BaseResp baseResp
-    2: required string ak;
-    3: required string sk;
-    4: required string key;
-    5: required string ossPath;
+    2: required string key;
+    3: required string signedUrl;
 }
 
 struct DownloadFileReq{
@@ -20,10 +18,8 @@ struct DownloadFileReq{
 }
 struct DownloadFileResp{
     1: required base.BaseResp baseResp
-    2: required string ak;
-    3: required string sk;
-    4: required string ossPath;
-    5: required string name;
+    2: required string signedUrl;
+    3: required string name;
 }
 
 struct DeleteFileReq{

@@ -17,6 +17,12 @@ type OpenTelemetryConfig struct {
 	Endpoint string `yaml:"endpoint"`
 }
 
+type CosConfig struct {
+	Ak       string `yaml:"ak"`
+	Sk       string `yaml:"sk"`
+	Endpoint string `yaml:"endpoint"`
+}
+
 type EtcdConfig struct {
 	Endpoint []string `yaml:"endpoint"`
 }
@@ -35,6 +41,7 @@ type Config struct {
 	OpenTelemetryConfig OpenTelemetryConfig `yaml:"open-telemetry"`
 	DatabaseConfig      DatabaseConfig      `yaml:"database"`
 	EtcdConfig          EtcdConfig          `yaml:"etcd"`
+	CosConfig           CosConfig           `yaml:"cos"`
 }
 
 func GetConfig(env string) *Config {

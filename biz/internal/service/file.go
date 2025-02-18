@@ -2,19 +2,24 @@ package file
 
 import (
 	"context"
+	"fmt"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/google/uuid"
 	"github.com/li1553770945/personal-file-service/biz/constant"
 	"github.com/li1553770945/personal-file-service/biz/internal/assembler"
 	"github.com/li1553770945/personal-file-service/kitex_gen/base"
 	"github.com/li1553770945/personal-file-service/kitex_gen/file"
 	"math/rand"
+	"net/http"
+	"path/filepath"
+	"time"
 	"unicode"
 )
 
 func (s *FileService) UploadFile(ctx context.Context, req *file.UploadFileReq) (resp *file.UploadFileResp, err error) {
 	if req.Key == nil {
 		for { // 防止已有相同key
-			Key := s.generateKey()
+			Key := s.generateKey(constant.DEFAULT_KEY_LENGTH)
 			req.Key = &Key
 			entity, err := s.Repo.GetFile(Key)
 			if err != nil {
@@ -32,17 +37,42 @@ func (s *FileService) UploadFile(ctx context.Context, req *file.UploadFileReq) (
 				break
 			}
 		}
-	} else if !s.IsAlphanumeric(*req.Key) { // 用户提交了key，检查是否合法
-		resp := &file.UploadFileResp{
-			BaseResp: &base.BaseResp{
-				Code:    constant.InvalidInput,
-				Message: "非法key，只能使用数字或者大小写字母",
-			},
+	} else {
+		if !s.isAlphanumeric(*req.Key) { // 用户提交了key，检查是否合法
+			resp := &file.UploadFileResp{
+				BaseResp: &base.BaseResp{
+					Code:    constant.InvalidInput,
+					Message: "非法key，只能使用数字或者大小写字母",
+				},
+			}
+			return resp, nil
 		}
-		return resp, nil
+		entity, err := s.Repo.GetFile(*req.Key)
+		if err != nil {
+			resp = &file.UploadFileResp{
+				BaseResp: &base.BaseResp{
+					Code:    constant.SystemError,
+					Message: "数据库访问错误",
+				},
+			}
+			klog.CtxInfof(ctx, "查询已有文件时数据库访问错误：%v", err.Error())
+			return resp, nil
+		}
+		// 如果没有
+		if entity.ID != 0 {
+			resp = &file.UploadFileResp{
+				BaseResp: &base.BaseResp{
+					Code:    constant.InvalidInput,
+					Message: "已存在相同key的文件",
+				},
+			}
+			return resp, nil
+		}
 	}
 	entity := assembler.FileReqToEntity(req)
 	entity.DownloadCount = 0
+	ossPath := s.generateFilePath(entity.Name)
+	entity.OSSPath = ossPath
 	err = s.Repo.SaveFile(entity)
 	if err != nil {
 		resp = &file.UploadFileResp{
@@ -54,24 +84,24 @@ func (s *FileService) UploadFile(ctx context.Context, req *file.UploadFileReq) (
 		klog.CtxInfof(ctx, "数据库访问错误：%v", err.Error())
 		return resp, nil
 	}
-	ak, sk, err := s.getAkSk(ctx)
+
+	signedUrl, err := s.GetSignedUrl(ctx, http.MethodPost, entity.OSSPath)
 	if err != nil {
 		resp = &file.UploadFileResp{
 			BaseResp: &base.BaseResp{
 				Code:    constant.SystemError,
-				Message: "生成临时sk失败",
+				Message: "生成预签名url失败",
 			},
 		}
-		klog.CtxInfof(ctx, "生成临时sk失败:%v", err.Error())
+		klog.CtxInfof(ctx, "生成预签名url失败:%v", err.Error())
 		return resp, nil
 	}
 	resp = &file.UploadFileResp{
 		BaseResp: &base.BaseResp{
 			Code: constant.Success,
 		},
-		Ak:  ak,
-		Sk:  sk,
-		Key: entity.Key,
+		SignedUrl: signedUrl,
+		Key:       entity.Key,
 	}
 	return resp, nil
 }
@@ -96,25 +126,24 @@ func (s *FileService) DownloadFile(ctx context.Context, req *file.DownloadFileRe
 		}
 		return resp, nil
 	}
-	ak, sk, err := s.getAkSk(ctx)
+
+	signedUrl, err := s.GetSignedUrl(ctx, http.MethodGet, entity.OSSPath)
 	if err != nil {
 		resp = &file.DownloadFileResp{
 			BaseResp: &base.BaseResp{
 				Code:    constant.SystemError,
-				Message: "生成临时sk失败",
+				Message: "生成预签名url失败",
 			},
 		}
-		klog.CtxInfof(ctx, "生成临时sk失败:%v", err.Error())
+		klog.CtxInfof(ctx, "生成预签名url失败:%v", err.Error())
 		return resp, nil
 	}
 	resp = &file.DownloadFileResp{
 		BaseResp: &base.BaseResp{
 			Code: constant.Success,
 		},
-		Ak:      ak,
-		Sk:      sk,
-		OssPath: entity.OSSPath,
-		Name:    entity.Name,
+		SignedUrl: signedUrl,
+		Name:      entity.Name,
 	}
 	return resp, nil
 }
@@ -158,24 +187,42 @@ func (s *FileService) DeleteFile(ctx context.Context, req *file.DeleteFileReq) (
 	return resp, nil
 }
 
-func (s *FileService) getAkSk(ctx context.Context) (ak string, sk string, err error) {
-	return "ak", "sk", nil
-}
-
-func (s *FileService) generateKey() (key string) {
+func (s *FileService) generateKey(length int32) (key string) {
 	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-	b := make([]rune, 4)
+	b := make([]rune, length)
 	for i := range b {
 		b[i] = letters[rand.Intn(len(letters))]
 	}
 	return string(b)
 }
 
-func (s *FileService) IsAlphanumeric(str string) bool {
+func (s *FileService) isAlphanumeric(str string) bool {
 	for _, r := range str {
 		if !unicode.IsLetter(r) && !unicode.IsDigit(r) {
 			return false
 		}
 	}
 	return true
+}
+func (s *FileService) generateFilePath(fileName string) string {
+	currentTime := time.Now()
+
+	// 提取当前年月日
+	year := currentTime.Year()
+	month := currentTime.Month()
+	day := currentTime.Day()
+
+	ext := filepath.Ext(fileName)
+	newFileName := uuid.New().String() + ext
+
+	// 拼接路径
+	filePath := fmt.Sprintf("%d/%d/%d/%s", year, month, day, newFileName)
+	return filePath
+}
+func (s *FileService) GetSignedUrl(ctx context.Context, method, name string) (string, error) {
+	signedURL, err := s.CosClient.Object.GetPresignedURL(ctx, method, name, s.Config.CosConfig.Ak, s.Config.CosConfig.Sk, time.Hour, nil)
+	if err != nil {
+		return "", err
+	}
+	return signedURL.Path, err
 }

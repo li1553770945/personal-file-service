@@ -8,6 +8,7 @@ import (
 	"github.com/li1553770945/personal-file-service/biz/infra/config"
 	"github.com/li1553770945/personal-file-service/biz/infra/database"
 	"github.com/li1553770945/personal-file-service/biz/infra/log"
+	"github.com/li1553770945/personal-file-service/biz/infra/oss"
 	"github.com/li1553770945/personal-file-service/biz/infra/trace"
 	"github.com/li1553770945/personal-file-service/biz/internal/repo"
 	"github.com/li1553770945/personal-file-service/biz/internal/service"
@@ -20,6 +21,7 @@ func GetContainer(env string) *Container {
 		config.GetConfig,
 		log.InitLog,
 		trace.InitTrace,
+		oss.NewCosClient,
 
 		//repo
 		repo.NewRepository,
