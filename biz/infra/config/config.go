@@ -33,6 +33,7 @@ type DatabaseConfig struct {
 	Database string `yaml:"database"`
 	Address  string `yaml:"address"`
 	Port     int32  `yaml:"port"`
+	UseTLS   bool   `yaml:"use-tls"`
 }
 
 type Config struct {
